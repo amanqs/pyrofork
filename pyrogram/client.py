@@ -633,16 +633,6 @@ class Client(Methods):
                 pts = getattr(update, "pts", None)
                 pts_count = getattr(update, "pts_count", None)
 
-                if pts:
-                    await self.storage.update_state(
-                        (
-                            utils.get_channel_id(channel_id) if channel_id else 0,
-                            pts,
-                            None,
-                            updates.date,
-                            None
-                        )
-                    )
 
                 if isinstance(update, raw.types.UpdateChannelTooLong):
                     log.info(update)
@@ -675,15 +665,7 @@ class Client(Methods):
 
                 self.dispatcher.updates_queue.put_nowait((update, users, chats))
         elif isinstance(updates, (raw.types.UpdateShortMessage, raw.types.UpdateShortChatMessage)):
-            await self.storage.update_state(
-                (
-                    0,
-                    updates.pts,
-                    None,
-                    updates.date,
-                    None
-                )
-            )
+
 
             diff = await self.invoke(
                 raw.functions.updates.GetDifference(
@@ -712,7 +694,7 @@ class Client(Methods):
             log.info(updates)
 
     async def recover_gaps(self) -> Tuple[int, int]:
-        states = await self.storage.update_state()
+
 
         message_updates_counter = 0
         other_updates_counter = 0
@@ -792,7 +774,7 @@ class Client(Methods):
                 if isinstance(diff, (raw.types.updates.Difference, raw.types.updates.ChannelDifference)):
                     break
 
-            await self.storage.update_state(id)
+
 
         log.info("Recovered %s messages and %s updates.", message_updates_counter, other_updates_counter)
         return (message_updates_counter, other_updates_counter)

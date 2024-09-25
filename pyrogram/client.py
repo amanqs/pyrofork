@@ -605,7 +605,7 @@ class Client(Methods):
             parsed_peers.append((peer_id, access_hash, peer_type, username, phone_number))
 
         await self.storage.update_peers(parsed_peers)
-        await self.storage.update_usernames(usernames)
+
 
         return is_min
 
